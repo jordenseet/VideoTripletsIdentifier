@@ -8,8 +8,8 @@
         {% if uploaded_files %}
         <h1>Uploaded Files</h1>
         <ul>
-            {% for uploaded_file in uploaded_files %}
-            <li><a href="/azure?file={{ uploaded_file }}">{{ uploaded_file }}</a> [<a href="/images/{{ uploaded_file }}/delete">Delete</a>]</li>
+            {% for name, type in uploaded_files %}
+            <li><a href="/azure?file={{ name }}">{{ name }}</a> [<a href="/{{ type }}/{{ name }}/delete">Delete</a>]</li>
             {% endfor %}
         </ul>
         {% endif %}

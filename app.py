@@ -6,36 +6,67 @@ import requests, os
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-if not os.path.isdir(app.config['UPLOAD_FOLDER']):
-    print(f'Created {app.config["UPLOAD_FOLDER"]}')
-    os.mkdir(app.config['UPLOAD_FOLDER'])
+if not os.path.isdir(app.config['IMAGE_UPLOAD_FOLDER']):
+    print(f'Created {app.config["IMAGE_UPLOAD_FOLDER"]}')
+    os.mkdir(app.config['IMAGE_UPLOAD_FOLDER'])
+
+if not os.path.isdir(app.config['VIDEO_UPLOAD_FOLDER']):
+    print(f'Created {app.config["VIDEO_UPLOAD_FOLDER"]}')
+    os.mkdir(app.config['VIDEO_UPLOAD_FOLDER'])
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    directory_name = None
     if request.method == "POST":
         print(request.files)
         if 'image' in request.files:
-            image = request.files['image']
-            if image.filename != '':
-                filename = secure_filename(image.filename)
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                # return redirect(url_for('uploaded_file', filename=filename))
+            file = request.files['image']
+            if file.filename != '':
+                extension = file.filename.split(".")[-1]
+                if extension in app.config['ALLOWED_IMAGE_EXTENSIONS']:
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], filename))
+                    directory_name = (app.config['IMAGE_UPLOAD_FOLDER'])
+                    # return redirect(url_for('uploaded_file', filename=filename))
+                elif extension in app.config['ALLOWED_VIDEO_EXTENSIONS']:
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], filename))
+                    directory_name = (app.config['VIDEO_UPLOAD_FOLDER'])
     
-    uploaded_files = os.listdir(app.config['UPLOAD_FOLDER'])
+    uploaded_files = []
+    for video in os.listdir(app.config['VIDEO_UPLOAD_FOLDER']):
+        uploaded_files.append(tuple([video,app.config['VIDEO_UPLOAD_FOLDER'][2:]]))
+    for image in os.listdir(app.config['IMAGE_UPLOAD_FOLDER']):
+        uploaded_files.append(tuple([image,app.config['IMAGE_UPLOAD_FOLDER'][2:]]))
+
+    print(uploaded_files)
+    uploaded_files = tuple(uploaded_files)
     return render_template('index.html', uploaded_files=uploaded_files)
 
 
 @app.route('/images/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+def uploaded_image_file(filename):
+    return send_from_directory(app.config['IMAGE_UPLOAD_FOLDER'], filename)
+
+@app.route('/videos/<filename>')
+def uploaded_video_file(filename):
+    return send_from_directory(app.config['VIDEO_UPLOAD_FOLDER'], filename)
 
 
 @app.route('/images/<filename>/delete')
-def delete_file(filename):
-    image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+def delete_video_file(filename):
+    image_path = os.path.join(app.config["IMAGE_UPLOAD_FOLDER"], filename)
     if os.path.isfile(image_path):
         os.remove(image_path)
+
+    return redirect(url_for('index'))
+
+@app.route('/videos/<filename>/delete')
+def delete_image_file(filename):
+    video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
+    if os.path.isfile(video_path):
+        os.remove(video_path)
 
     return redirect(url_for('index'))
 
@@ -44,7 +75,7 @@ def delete_file(filename):
 def get_captions():
     # Set image_path to the local path of an image that you want to analyze.
     filename = request.args['file'] if 'file' in request.args else ''
-    image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    image_path = os.path.join(app.config["IMAGE_UPLOAD_FOLDER"], filename)
 
     # ensure that the file exists before we process it
     if not os.path.isfile(image_path):
