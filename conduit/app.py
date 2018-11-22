@@ -3,10 +3,13 @@
 from flask import Flask
 from conduit.extensions import bcrypt, cache, db, migrate, jwt, cors
 
-from conduit import commands, user, profile, articles
+from conduit import commands, user, profile, articles, app
 from conduit.settings import ProdConfig
 from conduit.exceptions import InvalidUsage
 
+@app.route('/', methods=['GET'])
+def default_route():
+    return "Team Odin home page :)";
 
 def create_app(config_object=ProdConfig):
     """An application factory, as explained here:
