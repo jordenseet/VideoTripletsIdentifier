@@ -6,6 +6,10 @@ import requests, os
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
+if not os.path.isdir(app.config['UPLOAD_FOLDER']):
+    print(f'Created {app.config["UPLOAD_FOLDER"]}')
+    os.mkdir(app.config['UPLOAD_FOLDER'])
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
