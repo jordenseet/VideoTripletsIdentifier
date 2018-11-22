@@ -1,5 +1,6 @@
 
 --------------------Flask-----------------
+
 Quickstart
 ----------
 
@@ -83,7 +84,6 @@ To apply the migration.
 For a full migration command reference, run ``flask db --help``.
 
 ------------------React-----------------
-# ![React + Redux Example App](project-logo.png)
 
 > ### React + Redux codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld-example-apps) spec and API.
 
@@ -153,6 +153,4 @@ The example application is a social blogging site (i.e. a Medium.com clone) call
     - List of articles populated from author's created articles or author's favorited articles
 
 <br />
-
-[![Brought to you by Thinkster](https://raw.githubusercontent.com/gothinkster/realworld/master/media/end.png)](https://thinkster.io)
 
