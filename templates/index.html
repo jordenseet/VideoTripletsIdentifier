@@ -1,0 +1,17 @@
+<html>
+    <body>
+        <form method="POST" action="/" enctype="multipart/form-data">
+            <input type="file" name="image" />
+            <input type="submit" value="Upload" />
+        </form>
+
+        {% if uploaded_files %}
+        <h1>Uploaded Files</h1>
+        <ul>
+            {% for uploaded_file in uploaded_files %}
+            <li><a href="/azure?file={{ uploaded_file }}">{{ uploaded_file }}</a> [<a href="/images/{{ uploaded_file }}/delete">Delete</a>]</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </body>
+</html>
