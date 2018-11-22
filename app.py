@@ -69,7 +69,25 @@ def get_captions():
     print(analysis)
     image_caption = analysis["description"]["captions"][0]["text"].capitalize()
     return image_caption
+
+@app.route('/upload_video_to_azure', methods=['GET'])
+def upload_video_to_azure():
+    # Set image_path to the local path of an image that you want to analyze.
+    token = get_account_access_token()
+    return token
     
+def get_account_access_token():
+    subscription_key = app.config['VIDEO_INDEXER_SUBSCRIPTION_KEY']
+    location = app.config['VIDEO_INDEXER_LOCATION']
+    accountId = app.config['VIDEO_INDEXER_ACCOUNT_ID']
+    
+    headers    = {'Ocp-Apim-Subscription-Key': subscription_key}
+    params     = {'location': location, 'accountId': accountId}
+    response = requests.get(
+        app.config['VIDEO_INDEXER_ACCOUNT_AUTH_URL'], headers=headers, params=params)
+    response.raise_for_status()
+    token = response.json()
+    return token
 
 if __name__ == "__main__":
     app.run(debug=True)
