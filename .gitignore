@@ -56,3 +56,8 @@ dev.db
 
 # Vagrant machines
 .vagrant/**
+
+# Custom excludes
+venv/*
+migrations/*
+.vscode/*
