@@ -1,3 +1,5 @@
 .vscode/*
 images/*
+videos/*
 venv/*
+node_modules

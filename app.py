@@ -90,8 +90,7 @@ def get_captions():
     headers    = {'Ocp-Apim-Subscription-Key': subscription_key,
                   'Content-Type': 'application/octet-stream'}
     params     = {'visualFeatures': 'Categories,Description,Color'}
-    response = requests.post(
-        app.config['AZURE_VISION_ANALYZE_URL'], headers=headers, params=params, data=image_data)
+    response   = requests.post(app.config['AZURE_VISION_ANALYZE_URL'], headers=headers, params=params, data=image_data)
     response.raise_for_status()
 
     # The 'analysis' object contains various fields that describe the image. The most
@@ -100,7 +99,32 @@ def get_captions():
     print(analysis)
     image_caption = analysis["description"]["captions"][0]["text"].capitalize()
     return image_caption
+
+@app.route('/upload_video_to_azure', methods=['POST'])
+def upload_video_to_azure():
+    filename   = "dummy_filename.mp4"
+    filepath   = "dummy_filepath"
+    token      = get_account_access_token()
+    headers    = {'Content-Type': 'multipart/form-data'}
+    params     = {'accessToken': accessToken, 'name': filename}
+    files      = {'body': open(filepath, 'rb')}
+    response   = requests.post(app.config['VIDEO_INDEXER_VIDEO_UPLOAD_URL'], headers=headers, params=params, files=files)
+    response.raise_for_status()
+    result = response.json()
+    return result
     
+def get_account_access_token():
+    subscription_key = app.config['VIDEO_INDEXER_SUBSCRIPTION_KEY']
+    location         = app.config['VIDEO_INDEXER_LOCATION']
+    accountId        = app.config['VIDEO_INDEXER_ACCOUNT_ID']
+    
+    headers    = {'Ocp-Apim-Subscription-Key': subscription_key}
+    params     = {'location': location, 'accountId': accountId}
+    response   = requests.get(
+        app.config['VIDEO_INDEXER_ACCOUNT_AUTH_URL'], headers=headers, params=params)
+    response.raise_for_status()
+    token = response.json()
+    return token
 
 if __name__ == "__main__":
     app.run(debug=True)
