@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from werkzeug.utils import secure_filename
 import os.path
 import requests, os
+import cv2
+import numpy as np
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -101,6 +103,67 @@ def upload_video_to_azure():
     response.raise_for_status()
     result = response.json()
     return result
+
+@app.route('/chunking', methods=['GET'])
+def chunking():
+        
+    folder = 'keyframes'  
+    firstFrame = True
+    filename   = request.args['file'] if 'file' in request.args else ''
+    video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
+    vidcap = cv2.VideoCapture(video_path)
+    count = 0
+    prev_image = None
+
+    while True:
+        # set time in video to capture
+        vidcap.set(cv2.CAP_PROP_POS_MSEC,(count*1000)) 
+        success,image = vidcap.read()
+        if not success:
+            break
+            
+        # save frame as JPEG file
+        #cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)     
+        # comparing between 2 images
+        if firstFrame == True:
+            prev_image = image
+            firstFrame = False
+        if not prev_image is None:
+            # accumulator variables to calculate similarity
+            dot_product = 0
+            magnitude_a = 0
+            magnitude_b = 0
+            for row in range(len(image)):
+                for col in range(len(image[0])):
+                    rgb          = image[row][col]
+                    prev_rgb     = prev_image[row][col]
+                    grey         = int(0.3*rgb[0] + 0.59*rgb[1] + 0.11*rgb[2])
+                    prev_grey    = int(0.3*prev_rgb[0] + 0.59*prev_rgb[1] + 0.11*prev_rgb[2])
+                    dot_product += grey*prev_grey
+                    magnitude_a += grey**2
+                    magnitude_b += prev_grey**2
+            try:
+                similarity = dot_product / (magnitude_a**0.5 * magnitude_b**0.5)
+                if similarity < 0.8:
+                    cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)
+                    prev_image = image
+                print(similarity)
+            except Exception as e:
+                prev_image = image
+                print(e)
+
+        count += 1
+    return "Success"
+
+@app.route('/triplets', methods=['GET'])
+def triplets():
+    text = request.args['text'] if 'text' in request.args else ''
+    response = requests.get("http://www.newventify.com/rdf?sentence=" + text)
+    triples = response.json()
+    wordObject = triples["object"]["word"]
+    wordSubject = triples["subject"]["word"]
+    wordPredicate = triples["predicate"]["word"]
+    return "Subject : " + wordSubject + ", Predicate : " + wordPredicate + ", Object : " + wordObject 
 
 def get_account_access_token():
     subscription_key = app.config['VIDEO_INDEXER_SUBSCRIPTION_KEY']
