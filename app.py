@@ -75,7 +75,8 @@ def get_image_captions():
     headers    = {'Ocp-Apim-Subscription-Key': subscription_key,
                   'Content-Type': 'application/octet-stream'}
     params     = {'visualFeatures': 'Categories,Description,Color'}
-    response   = requests.post(app.config['AZURE_VISION_ANALYZE_URL'], headers=headers, params=params, data=image_data)
+    response   = requests.post(app.config['AZURE_VISION_ANALYZE_URL'], 
+                 headers=headers, params=params, data=image_data)
     response.raise_for_status()
 
     # The 'analysis' object contains various fields that describe the image. The most
@@ -90,16 +91,16 @@ def get_image_captions():
 def upload_video_to_azure():
     # Set video_path to the local path of a video that you want to analyze.
     filename   = request.args['file'] if 'file' in request.args else ''
-    video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     token      = get_account_access_token()
-    headers    = {'Content-Type': 'multipart/form-data'}
     params     = {'accessToken': token, 'name': filename}
-    files      = {'body': open(video_path, 'rb')}
-    response   = requests.post(app.config['VIDEO_INDEXER_VIDEO_UPLOAD_URL'], headers=headers, params=params, files=files)
+    headers    = {'Content-Type': 'multipart/form-data'}
+    video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
+    files      = {'file' : open(video_path, 'rb').read()}
+    response   = requests.post(app.config['VIDEO_INDEXER_VIDEO_UPLOAD_URL'],
+                 params=params, headers=headers, files=files)
     response.raise_for_status()
     result = response.json()
     return result
-
 
 def get_account_access_token():
     subscription_key = app.config['VIDEO_INDEXER_SUBSCRIPTION_KEY']
@@ -107,7 +108,7 @@ def get_account_access_token():
     accountId        = app.config['VIDEO_INDEXER_ACCOUNT_ID']
     
     headers    = {'Ocp-Apim-Subscription-Key': subscription_key}
-    params     = {'location': location, 'accountId': accountId}
+    params     = {'allowEdit': 'true'}
     response   = requests.get(app.config['VIDEO_INDEXER_ACCOUNT_AUTH_URL'], headers=headers, params=params)
     response.raise_for_status()
     token = response.json()
