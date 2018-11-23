@@ -20,8 +20,8 @@ def index():
     directory_name = None
     if request.method == "POST":
         print(request.files)
-        if 'image' in request.files:  # videos and images both appear as 'image'
-            file = request.files['image']  # gets the file
+        if 'file' in request.files:  # videos and images both appear as 'file'
+            file = request.files['file']  # gets the file
             if file.filename != '':
                 extension = file.filename.split(".")[-1]  # gets the extension of the file
                 if extension in app.config['ALLOWED_IMAGE_EXTENSIONS']:  # checks if the extension is an image allowed extension
@@ -71,8 +71,8 @@ def delete_image_file(filename):
     return redirect(url_for('index'))
 
 
-@app.route('/azure', methods=['GET'])
-def get_captions():
+@app.route('/get_image_captions', methods=['GET'])
+def get_image_captions():
     # Set image_path to the local path of an image that you want to analyze.
     filename = request.args['file'] if 'file' in request.args else ''
     image_path = os.path.join(app.config["IMAGE_UPLOAD_FOLDER"], filename)
@@ -100,14 +100,15 @@ def get_captions():
     image_caption = analysis["description"]["captions"][0]["text"].capitalize()
     return image_caption
 
-@app.route('/upload_video_to_azure', methods=['POST'])
+@app.route('/upload_video_to_azure', methods=['GET'])
 def upload_video_to_azure():
-    filename   = "dummy_filename.mp4"
-    filepath   = "dummy_filepath"
+    # Set video_path to the local path of a video that you want to analyze.
+    filename   = request.args['file'] if 'file' in request.args else ''
+    video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     token      = get_account_access_token()
     headers    = {'Content-Type': 'multipart/form-data'}
-    params     = {'accessToken': accessToken, 'name': filename}
-    files      = {'body': open(filepath, 'rb')}
+    params     = {'accessToken': token, 'name': filename}
+    files      = {'body': open(video_path, 'rb')}
     response   = requests.post(app.config['VIDEO_INDEXER_VIDEO_UPLOAD_URL'], headers=headers, params=params, files=files)
     response.raise_for_status()
     result = response.json()

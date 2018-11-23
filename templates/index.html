@@ -1,7 +1,7 @@
 <html>
     <body>
         <form method="POST" action="/" enctype="multipart/form-data">
-            <input type="file" name="image" />
+            <input type="file" name="file" />
             <input type="submit" value="Upload" />
         </form>
 
@@ -9,7 +9,8 @@
         <h1>Uploaded Files</h1>
         <ul>
             {% for name, type in uploaded_files %}
-            <li><a href="/azure?file={{ name }}">{{ name }}</a> [<a href="/{{ type }}/{{ name }}/delete">Delete</a>]</li>
+            {% set endpoint = "/get_image_captions" if type == "images" else "/upload_video_to_azure" %}
+            <li><a href="{{ endpoint }}?file={{ name }}">{{ name }}</a> [<a href="/{{ type }}/{{ name }}/delete">Delete</a>]</li>
             {% endfor %}
         </ul>
         {% endif %}
