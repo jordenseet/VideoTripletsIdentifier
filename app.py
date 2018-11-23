@@ -6,13 +6,10 @@ import requests, os
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-if not os.path.isdir(app.config['IMAGE_UPLOAD_FOLDER']):
-    print(f'Created {app.config["IMAGE_UPLOAD_FOLDER"]}')
-    os.mkdir(app.config['IMAGE_UPLOAD_FOLDER'])
-
-if not os.path.isdir(app.config['VIDEO_UPLOAD_FOLDER']):
-    print(f'Created {app.config["VIDEO_UPLOAD_FOLDER"]}')
-    os.mkdir(app.config['VIDEO_UPLOAD_FOLDER'])
+for folder in (app.config['IMAGE_UPLOAD_FOLDER'], app.config['VIDEO_UPLOAD_FOLDER']):
+    if not os.path.isdir(folder):
+        print(f'Created {folder}')
+        os.mkdir(folder)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -25,48 +22,36 @@ def index():
             if file.filename != '':
                 extension = file.filename.split(".")[-1]  # gets the extension of the file
                 if extension in app.config['ALLOWED_IMAGE_EXTENSIONS']:  # checks if the extension is an image allowed extension
-                    filename = secure_filename(file.filename)
-                    file.save(os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], filename))
-                    directory_name = (app.config['IMAGE_UPLOAD_FOLDER'])
-                    # return redirect(url_for('uploaded_file', filename=filename))
+                    directory_name = app.config['IMAGE_UPLOAD_FOLDER']
                 elif extension in app.config['ALLOWED_VIDEO_EXTENSIONS']:  # checks if the extension is a video allowed extension
+                    directory_name = app.config['VIDEO_UPLOAD_FOLDER']
+
+                if directory_name:
                     filename = secure_filename(file.filename)
-                    file.save(os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], filename))
-                    directory_name = (app.config['VIDEO_UPLOAD_FOLDER'])
+                    file.save(os.path.join(directory_name, filename))
     
     uploaded_files = []
-    for video in os.listdir(app.config['VIDEO_UPLOAD_FOLDER']):  # gets all the video files in the video folder
-        uploaded_files.append(tuple([video,app.config['VIDEO_UPLOAD_FOLDER'][2:]]))  # adds the file name and the video folder name to a tuple
-    for image in os.listdir(app.config['IMAGE_UPLOAD_FOLDER']):  # gets all the image files in the image folder
-        uploaded_files.append(tuple([image,app.config['IMAGE_UPLOAD_FOLDER'][2:]]))  # adds the file name and the image folder name to a tuple
+    # adds all file names and the file types to a tuple array
+    uploaded_files.extend((video, app.config['VIDEO_UPLOAD_FOLDER'][2:]) for video in os.listdir(app.config['VIDEO_UPLOAD_FOLDER']))
+    uploaded_files.extend((video, app.config['IMAGE_UPLOAD_FOLDER'][2:]) for video in os.listdir(app.config['IMAGE_UPLOAD_FOLDER']))
 
     # print(uploaded_files)
     uploaded_files = tuple(uploaded_files)  # casts the list to tuple
     return render_template('index.html', uploaded_files=uploaded_files)
 
 
-@app.route('/images/<filename>')
-def uploaded_image_file(filename):
+@app.route('/<filetype>/<filename>')
+def uploaded_file(filetype, filename):
+    folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype.lower() == "images" else app.config["VIDEO_UPLOAD_FOLDER"]
     return send_from_directory(app.config['IMAGE_UPLOAD_FOLDER'], filename)
 
-@app.route('/videos/<filename>')
-def uploaded_video_file(filename):
-    return send_from_directory(app.config['VIDEO_UPLOAD_FOLDER'], filename)
 
-
-@app.route('/images/<filename>/delete')
-def delete_video_file(filename):
-    image_path = os.path.join(app.config["IMAGE_UPLOAD_FOLDER"], filename)
-    if os.path.isfile(image_path):
-        os.remove(image_path)
-
-    return redirect(url_for('index'))
-
-@app.route('/videos/<filename>/delete')
-def delete_image_file(filename):
-    video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
-    if os.path.isfile(video_path):
-        os.remove(video_path)
+@app.route('/<filetype>/<filename>/delete')
+def delete_file(filetype, filename):
+    folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype.lower() == "images" else app.config["VIDEO_UPLOAD_FOLDER"]
+    filepath = os.path.join(folder, filename)
+    if os.path.isfile(filepath):
+        os.remove(filepath)
 
     return redirect(url_for('index'))
 
@@ -100,6 +85,7 @@ def get_image_captions():
     image_caption = analysis["description"]["captions"][0]["text"].capitalize()
     return image_caption
 
+
 @app.route('/upload_video_to_azure', methods=['GET'])
 def upload_video_to_azure():
     # Set video_path to the local path of a video that you want to analyze.
@@ -113,7 +99,8 @@ def upload_video_to_azure():
     response.raise_for_status()
     result = response.json()
     return result
-    
+
+
 def get_account_access_token():
     subscription_key = app.config['VIDEO_INDEXER_SUBSCRIPTION_KEY']
     location         = app.config['VIDEO_INDEXER_LOCATION']
@@ -121,11 +108,11 @@ def get_account_access_token():
     
     headers    = {'Ocp-Apim-Subscription-Key': subscription_key}
     params     = {'location': location, 'accountId': accountId}
-    response   = requests.get(
-        app.config['VIDEO_INDEXER_ACCOUNT_AUTH_URL'], headers=headers, params=params)
+    response   = requests.get(app.config['VIDEO_INDEXER_ACCOUNT_AUTH_URL'], headers=headers, params=params)
     response.raise_for_status()
     token = response.json()
     return token
+
 
 if __name__ == "__main__":
     app.run(debug=True)
