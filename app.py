@@ -20,28 +20,28 @@ def index():
     directory_name = None
     if request.method == "POST":
         print(request.files)
-        if 'image' in request.files:
-            file = request.files['image']
+        if 'image' in request.files:  # videos and images both appear as 'image'
+            file = request.files['image']  # gets the file
             if file.filename != '':
-                extension = file.filename.split(".")[-1]
-                if extension in app.config['ALLOWED_IMAGE_EXTENSIONS']:
+                extension = file.filename.split(".")[-1]  # gets the extension of the file
+                if extension in app.config['ALLOWED_IMAGE_EXTENSIONS']:  # checks if the extension is an image allowed extension
                     filename = secure_filename(file.filename)
                     file.save(os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], filename))
                     directory_name = (app.config['IMAGE_UPLOAD_FOLDER'])
                     # return redirect(url_for('uploaded_file', filename=filename))
-                elif extension in app.config['ALLOWED_VIDEO_EXTENSIONS']:
+                elif extension in app.config['ALLOWED_VIDEO_EXTENSIONS']:  # checks if the extension is a video allowed extension
                     filename = secure_filename(file.filename)
                     file.save(os.path.join(app.config['VIDEO_UPLOAD_FOLDER'], filename))
                     directory_name = (app.config['VIDEO_UPLOAD_FOLDER'])
     
     uploaded_files = []
-    for video in os.listdir(app.config['VIDEO_UPLOAD_FOLDER']):
-        uploaded_files.append(tuple([video,app.config['VIDEO_UPLOAD_FOLDER'][2:]]))
-    for image in os.listdir(app.config['IMAGE_UPLOAD_FOLDER']):
-        uploaded_files.append(tuple([image,app.config['IMAGE_UPLOAD_FOLDER'][2:]]))
+    for video in os.listdir(app.config['VIDEO_UPLOAD_FOLDER']):  # gets all the video files in the video folder
+        uploaded_files.append(tuple([video,app.config['VIDEO_UPLOAD_FOLDER'][2:]]))  # adds the file name and the video folder name to a tuple
+    for image in os.listdir(app.config['IMAGE_UPLOAD_FOLDER']):  # gets all the image files in the image folder
+        uploaded_files.append(tuple([image,app.config['IMAGE_UPLOAD_FOLDER'][2:]]))  # adds the file name and the image folder name to a tuple
 
-    print(uploaded_files)
-    uploaded_files = tuple(uploaded_files)
+    # print(uploaded_files)
+    uploaded_files = tuple(uploaded_files)  # casts the list to tuple
     return render_template('index.html', uploaded_files=uploaded_files)
 
 
