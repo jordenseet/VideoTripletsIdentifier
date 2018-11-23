@@ -26,23 +26,24 @@ while True:
     # save frame as JPEG file
     cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)     
     
+    # comparing between 2 images
     if not prev_image is None:
-        total_similarity = 0
-        row_length = len(image)
-        col_length = len(image[0])
-        for row in range(row_length):
-            for col in range(col_length):
-                rgb = image[row][col]
-                prev_rgb = prev_image[row][col]
-                dot_product = int(rgb[0])*int(prev_rgb[0]) + int(rgb[1])*int(prev_rgb[1]) + int(rgb[2])*int(prev_rgb[2])
-                magnitude_a = (rgb[0]**2 + rgb[1]**2 + rgb[2]**2) ** 0.5
-                magnitude_b = (prev_rgb[0]**2 + prev_rgb[1]**2 + prev_rgb[2]**2) ** 0.5
-                
-                cos_similarity = dot_product / (magnitude_a * magnitude_b) if magnitude_a != 0 and magnitude_b !=0 else 0
-                total_similarity += cos_similarity 
+        # accumulator variables to calculate similarity
+        dot_product = 0
+        magnitude_a = 0
+        magnitude_b = 0
+        for row in range(len(image)):
+            for col in range(len(image[0])):
+                rgb          = image[row][col]
+                prev_rgb     = prev_image[row][col]
+                grey         = int(0.3*rgb[0] + 0.59*rgb[1] + 0.11*rgb[2])
+                prev_grey    = int(0.3*prev_rgb[0] + 0.59*prev_rgb[1] + 0.11*prev_rgb[2])
+                dot_product += grey*prev_grey
+                magnitude_a += grey**2
+                magnitude_b += prev_grey**2
             
-        total_similarity /= (row_length * col_length)
-        print(total_similarity)
+        similarity = dot_product / (magnitude_a**0.5 * magnitude_b**0.5)
+        print(similarity)
 
     prev_image = image
     count += 1
