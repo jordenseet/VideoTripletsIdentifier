@@ -123,34 +123,35 @@ def chunking():
             break
             
         # save frame as JPEG file
-        #cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)     
+        # cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)     
         # comparing between 2 images
-        if not prev_image:
-            prev_image = image
+        if not prev_image is None:
 
-        # accumulator variables to calculate similarity
-        dot_product = 0
-        magnitude_a = 0
-        magnitude_b = 0
-        for row in range(len(image)):
-            for col in range(len(image[0])):
-                rgb          = image[row][col]
-                prev_rgb     = prev_image[row][col]
-                grey         = int(0.3*rgb[0] + 0.59*rgb[1] + 0.11*rgb[2])
-                prev_grey    = int(0.3*prev_rgb[0] + 0.59*prev_rgb[1] + 0.11*prev_rgb[2])
-                dot_product += grey*prev_grey
-                magnitude_a += grey**2
-                magnitude_b += prev_grey**2
-        try:
-            similarity = dot_product / (magnitude_a**0.5 * magnitude_b**0.5)
-            if similarity < 0.8:
-                cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)
-                prev_image = image
+            # accumulator variables to calculate similarity
+            dot_product = 0
+            magnitude_a = 0
+            magnitude_b = 0
+            for row in range(len(image)):
+                for col in range(len(image[0])):
+                    rgb          = image[row][col]
+                    prev_rgb     = prev_image[row][col]
+                    grey         = int(0.3*rgb[0] + 0.59*rgb[1] + 0.11*rgb[2])
+                    prev_grey    = int(0.3*prev_rgb[0] + 0.59*prev_rgb[1] + 0.11*prev_rgb[2])
+                    dot_product += grey*prev_grey
+                    magnitude_a += grey**2
+                    magnitude_b += prev_grey**2
+                    
+            similarity = 0
+            try:
+                similarity = dot_product / (magnitude_a**0.5 * magnitude_b**0.5)
+                if similarity < 0.8:
+                    cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)
+            except Exception as e:
+                pass
+                
             print(similarity)
-        except Exception as e:
-            prev_image = image
-            print(e)
-
+            
+        prev_image = image
         count += 1
     return "Success"
 
