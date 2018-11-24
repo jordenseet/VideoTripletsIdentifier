@@ -110,6 +110,7 @@ def upload_video_to_azure():
 def chunking():
     folder = 'keyframes'  
     filename   = request.args['file'] if 'file' in request.args else ''
+    filename_wo_ext = filename.split(".")[0]
     video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     vidcap = cv2.VideoCapture(video_path)
     count = 0
@@ -145,7 +146,7 @@ def chunking():
             try:
                 similarity = dot_product / (magnitude_a**0.5 * magnitude_b**0.5)
                 if similarity < 0.8:
-                    cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)
+                    cv2.imwrite(os.path.join(folder,filename_wo_ext+"_frame{:d}.jpg".format(count)), image)
             except Exception as e:
                 pass
                 

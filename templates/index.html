@@ -9,7 +9,7 @@
         <h1>Uploaded Files</h1>
         <ul>
             {% for name, type in uploaded_files %}
-            {% set endpoint = "/get_image_captions" if type == "images" else "/upload_video_to_azure" %}
+            {% set endpoint = "/get_image_captions" if type == "images" else "/chunking" %}
             <li><a href="{{ endpoint }}?file={{ name }}">{{ name }}</a> [<a href="/{{ type }}/{{ name }}/delete">Delete</a>]</li>
             {% endfor %}
         </ul>
