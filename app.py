@@ -9,7 +9,7 @@ import json
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-for folder in (app.config['IMAGE_UPLOAD_FOLDER'], app.config['VIDEO_UPLOAD_FOLDER']):
+for folder in (app.config['IMAGE_UPLOAD_FOLDER'], app.config['VIDEO_UPLOAD_FOLDER'], app.config['KEYFRAME_UPLOAD_FOLDER']):
     if not os.path.isdir(folder):
         print(f'Created {folder}')
         os.mkdir(folder)
@@ -37,21 +37,26 @@ def index():
     # adds all file names and the file types to a tuple array
     uploaded_files.extend((video, app.config['VIDEO_UPLOAD_FOLDER'][2:]) for video in os.listdir(app.config['VIDEO_UPLOAD_FOLDER']))
     uploaded_files.extend((video, app.config['IMAGE_UPLOAD_FOLDER'][2:]) for video in os.listdir(app.config['IMAGE_UPLOAD_FOLDER']))
+    keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'][2:]) for video in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER'])]
 
     # print(uploaded_files)
     uploaded_files = tuple(uploaded_files)  # casts the list to tuple
-    return render_template('index.html', uploaded_files=uploaded_files)
+    return render_template('index.html', uploaded_files=uploaded_files, keyframes=keyframes)
 
 
 @app.route('/<filetype>/<filename>')
 def uploaded_file(filetype, filename):
-    folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype.lower() == "images" else app.config["VIDEO_UPLOAD_FOLDER"]
-    return send_from_directory(app.config['IMAGE_UPLOAD_FOLDER'], filename)
+    folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype.lower() == "images" \
+        else app.config["VIDEO_UPLOAD_FOLDER"] if filetype.lower() == "videos" \
+        else app.config["KEYFRAME_UPLOAD_FOLDER"]
+    return send_from_directory(folder, filename)
 
 
 @app.route('/<filetype>/<filename>/delete')
 def delete_file(filetype, filename):
-    folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype.lower() == "images" else app.config["VIDEO_UPLOAD_FOLDER"]
+    folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype.lower() == "images" \
+    	else app.config["VIDEO_UPLOAD_FOLDER"] if filetype.lower() == "videos" \
+    	else app.config["KEYFRAME_UPLOAD_FOLDER"]
     filepath = os.path.join(folder, filename)
     if os.path.isfile(filepath):
         os.remove(filepath)
@@ -59,11 +64,11 @@ def delete_file(filetype, filename):
     return redirect(url_for('index'))
 
 
-@app.route('/get_image_captions', methods=['GET'])
-def get_image_captions():
+@app.route('/<folder>/get_image_captions', methods=['GET'])
+def get_image_captions(folder):
     # Set image_path to the local path of an image that you want to analyze.
     filename = request.args['file'] if 'file' in request.args else ''
-    image_path = os.path.join(app.config["IMAGE_UPLOAD_FOLDER"], filename)
+    image_path = os.path.join(folder, filename)
 
     # ensure that the file exists before we process it
     if not os.path.isfile(image_path):
@@ -87,7 +92,8 @@ def get_image_captions():
     analysis = response.json()
     print(analysis)
     image_caption = analysis["description"]["captions"][0]["text"].capitalize()
-    return image_caption
+    image_triplets = triplets(image_caption)
+    return json.dumps({ 'caption': image_caption, 'triplet': json.loads(image_triplets) })
 
 
 @app.route('/upload_video_to_azure', methods=['GET'])
@@ -108,7 +114,7 @@ def upload_video_to_azure():
 
 @app.route('/chunking', methods=['GET'])
 def chunking():
-    folder = 'keyframes'  
+    folder = app.config['KEYFRAME_UPLOAD_FOLDER'][2:]  
     filename   = request.args['file'] if 'file' in request.args else ''
     video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     vidcap = cv2.VideoCapture(video_path)
@@ -144,7 +150,7 @@ def chunking():
             similarity = 0
             try:
                 similarity = dot_product / (magnitude_a**0.5 * magnitude_b**0.5)
-                if similarity < 0.8:
+                if similarity < 0.93:
                     cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)
             except Exception as e:
                 pass
@@ -156,10 +162,10 @@ def chunking():
     return "Success"
 
 
-@app.route('/triplets', methods=['GET'])
-def triplets():
-    if 'text' in request.args:
-        response = requests.get(f"http://www.newventify.com/rdf?sentence={request.args['text']}")
+@app.route('/triplets/<text>', methods=['GET'])
+def triplets(text):
+    if text != '':
+        response = requests.get(f"http://www.newventify.com/rdf?sentence={text}")
         triples = response.json()
         result = { word: triples[word]['word'] for word in ['object', 'subject', 'predicate'] }
         return json.dumps(result)
