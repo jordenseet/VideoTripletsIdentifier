@@ -116,6 +116,7 @@ def upload_video_to_azure():
 def chunking():
     folder = app.config['KEYFRAME_UPLOAD_FOLDER'][2:]  
     filename   = request.args['file'] if 'file' in request.args else ''
+    filename_wo_ext = filename.split(".")[0]
     video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     vidcap = cv2.VideoCapture(video_path)
     count = 0
