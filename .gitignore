@@ -1,5 +1,7 @@
 .vscode/*
 images/*
 videos/*
-venv/*
-node_modules
+keyframes/*
+node_modules/*
+
+*.lock
