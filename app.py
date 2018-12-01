@@ -120,45 +120,38 @@ def chunking():
     video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     vidcap = cv2.VideoCapture(video_path)
     count = 0
-    prev_image = None
 
+    prev_image_greyscale = None
+    prev_image_magnitude = None
     while True:
         # set time in video to capture
         vidcap.set(cv2.CAP_PROP_POS_MSEC,(count*1000)) 
         success, image = vidcap.read()
         if not success:
             break
-            
-        # save frame as JPEG file
-        # cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)     
-        # comparing between 2 images
-        if not prev_image is None:
 
-            # accumulator variables to calculate similarity
-            dot_product = 0
-            magnitude_a = 0
-            magnitude_b = 0
-            for row in range(len(image)):
-                for col in range(len(image[0])):
-                    rgb          = image[row][col]
-                    prev_rgb     = prev_image[row][col]
-                    grey         = int(0.3*rgb[0] + 0.59*rgb[1] + 0.11*rgb[2])
-                    prev_grey    = int(0.3*prev_rgb[0] + 0.59*prev_rgb[1] + 0.11*prev_rgb[2])
-                    dot_product += grey*prev_grey
-                    magnitude_a += grey**2
-                    magnitude_b += prev_grey**2
-                    
+        # grayscale current image
+        image_greyscale = np.inner(image, [.3, .59, .11]).astype(int)
+        magnitude = np.square(image_greyscale).sum()
+
+        # comparing between 2 images
+        if prev_image_greyscale:
             similarity = 0
             try:
-                similarity = dot_product / (magnitude_a**0.5 * magnitude_b**0.5)
+                # accumulator variables to calculate similarity
+                dot_product = (image_greyscale * prev_image_greyscale).sum()
+                similarity = dot_product / (magnitude**0.5 * prev_image_magnitude**0.5)
+
                 if similarity < 0.93:
+                    # save frame as JPEG file
                     cv2.imwrite(os.path.join(folder,"frame{:d}.jpg".format(count)), image)
             except Exception as e:
                 pass
-                
+
             print(similarity)
-            
-        prev_image = image
+
+        prev_image_greyscale = image_greyscale
+        prev_image_magnitude = magnitude
         count += 1
     return "Success"
 
