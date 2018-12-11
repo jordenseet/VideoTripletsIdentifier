@@ -4,4 +4,6 @@ videos/*
 keyframes/*
 node_modules/*
 
+__pycache__/*
+
 *.lock

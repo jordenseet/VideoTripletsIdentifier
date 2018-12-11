@@ -1,6 +1,6 @@
 <html>
     <body>
-        <form method="POST" action="/" enctype="multipart/form-data">
+        <form method="POST" action="/files/upload" enctype="multipart/form-data">
             <input type="file" name="file" />
             <input type="submit" value="Upload" />
         </form>
@@ -9,8 +9,8 @@
         <h1>Uploaded Files</h1>
         <ul>
             {% for name, type in uploaded_files %}
-            {% set endpoint = "/" + type + "/get_image_captions" if type == "images" else "/chunking" %}
-            <li><a href="{{ endpoint }}?file={{ name }}">{{ name }}</a> [<a href="/{{ type }}/{{ name }}/delete">Delete</a>]</li>
+            {% set endpoint = "/files/" + type + "/get_image_captions" if type == "images" else "/process/chunking" %}
+            <li><a href="{{ endpoint }}?file={{ name }}">{{ name }}</a> [<a href="/files/{{ type }}/{{ name }}/delete">Delete</a>]</li>
             {% endfor %}
         </ul>
         {% endif %}
@@ -19,8 +19,8 @@
         <h1>Keyframes</h1>
         <ul>
             {% for name, type in keyframes %}
-            {% set endpoint = "/" + type + "/get_image_captions" %}
-            <li><a href="{{ endpoint }}?file={{ name }}"><img src="/{{ type }}/{{ name }}" width="150" height="100" /></a> [<a href="/{{ type }}/{{ name }}/delete">Delete</a>]</li>
+            {% set endpoint = "/files/" + type + "/process/get_image_captions" %}
+            <li><a href="{{ endpoint }}?file={{ name }}"><img src="/files/{{ type }}/{{ name }}" width="150" height="100" /></a> [<a href="/files/{{ type }}/{{ name }}/delete">Delete</a>]</li>
             {% endfor %}
         </ul>
         {% endif %}
