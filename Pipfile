@@ -11,6 +11,7 @@ Flask = "*"
 Pillow = "*"
 opencv-python = "*"
 flake8 = "*"
+flask-bootstrap = "*"
 
 [requires]
 python_version = "3.6"

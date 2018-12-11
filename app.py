@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask_bootstrap import Bootstrap
 import os.path
 import requests
 import os
@@ -6,6 +7,7 @@ import os
 from app import files, process
 
 app = Flask(__name__)
+Bootstrap(app)
 app.config.from_pyfile('config.py')
 
 app.register_blueprint(files.mod, url_prefix='/files')
