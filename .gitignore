@@ -1,9 +1,9 @@
 .vscode/*
-images/*
-videos/*
-keyframes/*
+uploads/*
 node_modules/*
 
 __pycache__/*
 
 *.lock
+
+database.db

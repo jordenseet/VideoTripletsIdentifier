@@ -1,9 +1,11 @@
-from flask import current_app as app
-from flask import Blueprint, jsonify, redirect, request, url_for
+import os
+
 import cv2
 import numpy as np
-import os
 import requests
+from flask import Blueprint
+from flask import current_app as app
+from flask import jsonify, redirect, request, url_for
 
 mod = Blueprint('process', __name__)
 

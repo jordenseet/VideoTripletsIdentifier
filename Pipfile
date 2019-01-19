@@ -4,14 +4,18 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+rope = "*"
+flake8 = "*"
+isort = "*"
 
 [packages]
 requests = "*"
 Flask = "*"
 Pillow = "*"
 opencv-python = "*"
-flake8 = "*"
 flask-bootstrap = "*"
+flask-login = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.6"

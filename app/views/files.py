@@ -1,7 +1,9 @@
-from flask import current_app as app
-from flask import Blueprint, request, redirect, send_from_directory, url_for
-from werkzeug.utils import secure_filename
 import os
+
+from flask import Blueprint
+from flask import current_app as app
+from flask import redirect, request, send_from_directory, url_for
+from werkzeug.utils import secure_filename
 
 mod = Blueprint('files', __name__)
 
