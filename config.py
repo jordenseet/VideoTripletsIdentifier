@@ -1,7 +1,10 @@
-ASSET_FOLDER = "./assets"
-IMAGE_UPLOAD_FOLDER = "./uploads/images"
-VIDEO_UPLOAD_FOLDER = "./uploads/videos"
-KEYFRAME_UPLOAD_FOLDER = "./uploads/keyframes"
+import os
+
+BASE_FOLDER = os.getcwd()
+ASSET_FOLDER = "assets"
+IMAGE_UPLOAD_FOLDER = "uploads/images"
+VIDEO_UPLOAD_FOLDER = "uploads/videos"
+KEYFRAME_UPLOAD_FOLDER = "uploads/keyframes"
 ALLOWED_IMAGE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_VIDEO_EXTENSIONS = set(['mp4'])
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB

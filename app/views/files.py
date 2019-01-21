@@ -35,7 +35,8 @@ def uploaded_file(filetype, filename):
         else app.config["VIDEO_UPLOAD_FOLDER"] if filetype == "videos" \
         else app.config["KEYFRAME_UPLOAD_FOLDER"] if filetype == "keyframes" \
         else app.config["ASSET_FOLDER"]
-    return send_from_directory(folder, filename)
+    return send_from_directory(os.path.join(app.config["BASE_FOLDER"], folder),
+                               filename)
 
 
 @mod.route('/<filetype>/<filename>/delete')

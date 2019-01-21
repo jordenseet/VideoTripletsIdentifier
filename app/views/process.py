@@ -23,6 +23,13 @@ def yolo():
     if not os.path.isfile(image_path):
         return redirect(url_for('index'))
 
+    # download weights if don't exist
+    if not os.path.isfile('assets/cfg/yolov3.cfg'):
+        print('Downloading YOLOv3 weights...')
+        weights = requests.get('https://pjreddie.com/media/files/yolov3.weights')
+        with open('assets/cfg/yolov3.cfg', 'wb') as f:
+            f.write(weights.content)
+
     owd = os.getcwd()
     os.chdir('./assets')
     os.chmod('./darknet', 755)
@@ -31,19 +38,22 @@ def yolo():
                         'detect',
                         'cfg/yolov3.cfg',
                         'yolov3.weights',
-                        image_path], stdout=subprocess.PIPE)
+                        image_path],
+                       stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE)
     os.chdir(owd)
     if p.returncode == 0:
         result = p.stdout.decode('utf-8')
         print(result)
         if os.path.isfile('./assets/predictions.jpg'):
             return '''
-            <html><body><img src="/assets/predictions.jpg" /></body></html>
+            <html><body><img src="/files/assets/predictions.jpg" /></body></html>
             '''
         else:
             return result
     else:
-        return 'Error'
+        err = p.stderr.decode('utf-8')
+        return 'Error: ' + str(err)
 
 
 @mod.route('/<folder>/get_image_captions', methods=['GET'])

@@ -1,6 +1,7 @@
+.vagrant/*
 .vscode/*
 uploads/*
-assets/*
+assets/yolov3.weights
 node_modules/*
 
 __pycache__/*
