@@ -12,12 +12,12 @@ app = create_app()
 def index():
     # adds all file names and the file types to a tuple array
     uploaded_files = [
-        *[(video, app.config['VIDEO_UPLOAD_FOLDER'][2:])
+        *[(video, app.config['VIDEO_UPLOAD_FOLDER'])
           for video in os.listdir(app.config['VIDEO_UPLOAD_FOLDER'])],
-        *[(video, app.config['IMAGE_UPLOAD_FOLDER'][2:])
+        *[(video, app.config['IMAGE_UPLOAD_FOLDER'])
           for video in os.listdir(app.config['IMAGE_UPLOAD_FOLDER'])]
     ]
-    keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'][2:])
+    keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'])
                  for video in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER'])]
 
     print(uploaded_files)

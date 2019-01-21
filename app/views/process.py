@@ -93,7 +93,7 @@ def get_image_captions(folder):
 
 @mod.route('/chunking', methods=['GET'])
 def chunking():
-    folder = app.config['KEYFRAME_UPLOAD_FOLDER'][2:]  
+    folder = app.config['KEYFRAME_UPLOAD_FOLDER']
     filename = request.args['file'] if 'file' in request.args else ''
     video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     vidcap = cv2.VideoCapture(video_path)
