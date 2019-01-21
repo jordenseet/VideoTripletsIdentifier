@@ -25,7 +25,7 @@
         <h1>Uploaded Files</h1>
         <ul>
             {% for name, type in uploaded_files %}
-            {% set endpoint = "/files/" + type + "/get_image_captions" if type == "images" else "/process/chunking" %}
+            {% set endpoint = "/process/" + type.replace("uploads/", "") + "/detect" if type == "uploads/images" else "/process/chunking" %}
             <li><a href="{{ endpoint }}?file={{ name }}">{{ name }}</a> [<a href="/files/{{ type }}/{{ name }}/delete">Delete</a>]</li>
             {% endfor %}
         </ul>

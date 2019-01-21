@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 import cv2
 import numpy as np
@@ -7,7 +8,42 @@ from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, redirect, request, url_for
 
+import config
+
 mod = Blueprint('process', __name__)
+
+
+@mod.route('/images/detect')
+def yolo():
+    # Set image_path to the local path of an image that you want to analyze.
+    filename = request.args['file'] if 'file' in request.args else ''
+    image_path = os.path.join(config.IMAGE_UPLOAD_FOLDER, filename)
+
+    # ensure that the file exists before we process it
+    if not os.path.isfile(image_path):
+        return redirect(url_for('index'))
+
+    owd = os.getcwd()
+    os.chdir('./assets')
+    os.chmod('./darknet', 755)
+    image_path = os.path.join('..', image_path)
+    p = subprocess.run(['./darknet',
+                        'detect',
+                        'cfg/yolov3.cfg',
+                        'yolov3.weights',
+                        image_path], stdout=subprocess.PIPE)
+    os.chdir(owd)
+    if p.returncode == 0:
+        result = p.stdout.decode('utf-8')
+        print(result)
+        if os.path.isfile('./assets/predictions.jpg'):
+            return '''
+            <html><body><img src="/assets/predictions.jpg" /></body></html>
+            '''
+        else:
+            return result
+    else:
+        return 'Error'
 
 
 @mod.route('/<folder>/get_image_captions', methods=['GET'])

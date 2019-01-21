@@ -18,7 +18,8 @@ def create_app():
     folders = (
         app.config['IMAGE_UPLOAD_FOLDER'],
         app.config['VIDEO_UPLOAD_FOLDER'],
-        app.config['KEYFRAME_UPLOAD_FOLDER']
+        app.config['KEYFRAME_UPLOAD_FOLDER'],
+        app.config['ASSET_FOLDER']
     )
 
     # Ensure that the necessary folders exist

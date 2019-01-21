@@ -20,7 +20,7 @@ def index():
     keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'][2:])
                  for video in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER'])]
 
-    # print(uploaded_files)
+    print(uploaded_files)
     uploaded_files = tuple(uploaded_files)  # casts the list to tuple
     return render_template(
         'index.html',
@@ -58,4 +58,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

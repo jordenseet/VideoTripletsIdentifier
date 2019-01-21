@@ -1,5 +1,6 @@
 .vscode/*
 uploads/*
+assets/*
 node_modules/*
 
 __pycache__/*

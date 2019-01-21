@@ -33,7 +33,8 @@ def uploaded_file(filetype, filename):
     filetype = filetype.lower()
     folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype == "images" \
         else app.config["VIDEO_UPLOAD_FOLDER"] if filetype == "videos" \
-        else app.config["KEYFRAME_UPLOAD_FOLDER"]
+        else app.config["KEYFRAME_UPLOAD_FOLDER"] if filetype == "keyframes" \
+        else app.config["ASSET_FOLDER"]
     return send_from_directory(folder, filename)
 
 
@@ -42,7 +43,8 @@ def delete_file(filetype, filename):
     filetype = filetype.lower()
     folder = app.config["IMAGE_UPLOAD_FOLDER"] if filetype == "images" \
         else app.config["VIDEO_UPLOAD_FOLDER"] if filetype == "videos" \
-        else app.config["KEYFRAME_UPLOAD_FOLDER"]
+        else app.config["KEYFRAME_UPLOAD_FOLDER"] if filetype == "keyframes" \
+        else app.config["ASSET_FOLDER"]
     filepath = os.path.join(folder, filename)
     if os.path.isfile(filepath):
         os.remove(filepath)
