@@ -24,10 +24,10 @@ def yolo():
         return redirect(url_for('index'))
 
     # download weights if don't exist
-    if not os.path.isfile('assets/cfg/yolov3.cfg'):
+    if not os.path.isfile('assets/yolov3.weights'):
         print('Downloading YOLOv3 weights...')
         weights = requests.get('https://pjreddie.com/media/files/yolov3.weights')
-        with open('assets/cfg/yolov3.cfg', 'wb') as f:
+        with open('assets/yolov3.weights', 'wb') as f:
             f.write(weights.content)
 
     owd = os.getcwd()
