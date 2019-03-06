@@ -23,25 +23,13 @@ def yolo():
     if not os.path.isfile(image_path):
         return redirect(url_for('index'))
 
-    # download weights if don't exist
-    if not os.path.isfile('assets/yolov3.weights'):
-        print('Downloading YOLOv3 weights...')
-        weights = requests.get('https://pjreddie.com/media/files/yolov3.weights')
-        with open('assets/yolov3.weights', 'wb') as f:
-            f.write(weights.content)
-
-    owd = os.getcwd()
-    os.chdir('./assets')
-    os.chmod('./darknet', 755)
-    image_path = os.path.join('..', image_path)
-    p = subprocess.run(['./darknet',
-                        'detect',
-                        'cfg/yolov3.cfg',
-                        'yolov3.weights',
-                        image_path],
+    # run accident detection
+    print(os.getcwd())
+    p = subprocess.run(['python', './accidentDetection/classifier.py',
+                        image_path,
+                        image_path+'_output.jpg'],
                        stdout=subprocess.PIPE,
                        stderr=subprocess.PIPE)
-    os.chdir(owd)
     if p.returncode == 0:
         result = p.stdout.decode('utf-8')
         print(result)
