@@ -67,7 +67,7 @@ class AccidentsClassifier(object):
         min_score_thresh =.5
         print("Score:", scores[0][0])
         if scores[0][0] > min_score_thresh:
-            output_image = input_image + '_output.jpg'
+            output_image = input_image
             plt.imsave(output_image, img)
             return True
         else:
