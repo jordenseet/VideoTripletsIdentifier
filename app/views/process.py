@@ -24,7 +24,6 @@ def yolo(filename=None):
     if not os.path.isfile(image_path):
         return redirect(url_for('index'))
 
-<<<<<<< HEAD
     hasAccident = x.detect_accident(image_path)
     print(hasAccident)
     if hasAccident:
@@ -33,10 +32,6 @@ def yolo(filename=None):
         return "False"
         
 
-=======
-    return x.detect_accident(image_path)
-        
->>>>>>> Remove darknet and refactor code. Chained chunking and detection on each keyframe
 @mod.route('/<folder>/get_image_captions', methods=['GET'])
 def get_image_captions(folder):
     # Set image_path to the local path of an image that you want to analyze.
