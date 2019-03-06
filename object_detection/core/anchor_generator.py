@@ -29,8 +29,7 @@ dynamically at generation time.  The number of anchors to place at each location
 is static --- implementations of AnchorGenerator must always be able return
 the number of anchors that it uses per location for each feature map.
 """
-from abc import ABCMeta
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 
 import tensorflow as tf
 
@@ -147,4 +146,3 @@ class AnchorGenerator(object):
                                * feature_map_shape[1])
       actual_num_anchors += anchors.num_boxes()
     return tf.assert_equal(expected_num_anchors, actual_num_anchors)
-

@@ -1,12 +1,12 @@
-import matplotlib.pyplot as plt
-import tensorflow as tf
-import numpy as np
-
-from object_detection.utils import label_map_util
-from object_detection.utils import visualization_utils as vis_util
-
 import os
 import sys
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from object_detection.utils import label_map_util
+from object_detection.utils import visualization_utils as vis_util
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -63,6 +63,7 @@ class AccidentsClassifier(object):
 
         vis_util.visualize_boxes_and_labels_on_image_array(img, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, line_thickness=8)
 
+<<<<<<< HEAD
         # if there is accident, write out the image
         min_score_thresh =.5
         print("Score:", scores[0][0])
@@ -72,3 +73,9 @@ class AccidentsClassifier(object):
             return True
         else:
             return False
+=======
+        output_image = input_image + '_output.jpg'
+        plt.imsave(output_image, img)
+
+        return "done"
+>>>>>>> Remove darknet and refactor code. Chained chunking and detection on each keyframe

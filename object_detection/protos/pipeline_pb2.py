@@ -2,22 +2,29 @@
 # source: object_detection/protos/pipeline.proto
 
 import sys
-_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+
 from google.protobuf import descriptor as _descriptor
+from google.protobuf import descriptor_pb2
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
+from object_detection.protos import \
+    eval_pb2 as object__detection_dot_protos_dot_eval__pb2
+from object_detection.protos import \
+    graph_rewriter_pb2 as object__detection_dot_protos_dot_graph__rewriter__pb2
+from object_detection.protos import \
+    input_reader_pb2 as object__detection_dot_protos_dot_input__reader__pb2
+from object_detection.protos import \
+    model_pb2 as object__detection_dot_protos_dot_model__pb2
+from object_detection.protos import \
+    train_pb2 as object__detection_dot_protos_dot_train__pb2
+
+_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
 
 
-from object_detection.protos import eval_pb2 as object__detection_dot_protos_dot_eval__pb2
-from object_detection.protos import graph_rewriter_pb2 as object__detection_dot_protos_dot_graph__rewriter__pb2
-from object_detection.protos import input_reader_pb2 as object__detection_dot_protos_dot_input__reader__pb2
-from object_detection.protos import model_pb2 as object__detection_dot_protos_dot_model__pb2
-from object_detection.protos import train_pb2 as object__detection_dot_protos_dot_train__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

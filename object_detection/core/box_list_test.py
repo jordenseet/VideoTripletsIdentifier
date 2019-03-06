@@ -16,7 +16,6 @@
 """Tests for object_detection.core.box_list."""
 
 import tensorflow as tf
-
 from object_detection.core import box_list
 
 

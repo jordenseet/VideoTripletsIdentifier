@@ -21,18 +21,21 @@ The functions do not return a value, instead they modify the image itself.
 """
 import collections
 import functools
-# Set headless-friendly backend.
-import matplotlib; matplotlib.use('Agg', warn=False)  # pylint: disable=multiple-statements
-import matplotlib.pyplot as plt  # pylint: disable=g-import-not-at-top
+
 import numpy as np
 import PIL.Image as Image
 import PIL.ImageColor as ImageColor
 import PIL.ImageDraw as ImageDraw
 import PIL.ImageFont as ImageFont
 import six
-import tensorflow as tf
 
+import matplotlib.pyplot as plt  # pylint: disable=g-import-not-at-top
+import tensorflow as tf
 from object_detection.core import standard_fields as fields
+
+# Set headless-friendly backend.
+import matplotlib; matplotlib.use('Agg', warn=False)  # pylint: disable=multiple-statements
+
 
 
 _TITLE_LEFT_MARGIN = 10

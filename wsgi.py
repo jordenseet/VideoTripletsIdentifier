@@ -1,9 +1,8 @@
 import os
 import os.path
 
-from flask import render_template
-
 from app import create_app
+from flask import render_template
 
 app = create_app()
 

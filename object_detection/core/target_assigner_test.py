@@ -15,16 +15,14 @@
 
 """Tests for object_detection.core.target_assigner."""
 import numpy as np
-import tensorflow as tf
 
-from object_detection.box_coders import keypoint_box_coder
-from object_detection.box_coders import mean_stddev_box_coder
-from object_detection.core import box_list
-from object_detection.core import region_similarity_calculator
+import tensorflow as tf
+from object_detection.box_coders import (keypoint_box_coder,
+                                         mean_stddev_box_coder)
+from object_detection.core import box_list, region_similarity_calculator
 from object_detection.core import standard_fields as fields
 from object_detection.core import target_assigner as targetassigner
-from object_detection.matchers import argmax_matcher
-from object_detection.matchers import bipartite_matcher
+from object_detection.matchers import argmax_matcher, bipartite_matcher
 from object_detection.utils import test_case
 
 

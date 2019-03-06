@@ -15,8 +15,8 @@
 
 """Tests for object_detection.core.matcher."""
 import numpy as np
-import tensorflow as tf
 
+import tensorflow as tf
 from object_detection.core import matcher
 
 

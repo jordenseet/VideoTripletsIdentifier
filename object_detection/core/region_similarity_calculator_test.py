@@ -15,9 +15,7 @@
 
 """Tests for region_similarity_calculator."""
 import tensorflow as tf
-
-from object_detection.core import box_list
-from object_detection.core import region_similarity_calculator
+from object_detection.core import box_list, region_similarity_calculator
 from object_detection.core import standard_fields as fields
 
 

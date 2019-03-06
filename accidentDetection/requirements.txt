@@ -1,4 +1,0 @@
-tensorflow
-Pillow
-matplotlib
-numpy

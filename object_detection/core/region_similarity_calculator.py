@@ -18,11 +18,9 @@
 Region Similarity Calculators compare a pairwise measure of similarity
 between the boxes in two BoxLists.
 """
-from abc import ABCMeta
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 
 import tensorflow as tf
-
 from object_detection.core import box_list_ops
 from object_detection.core import standard_fields as fields
 

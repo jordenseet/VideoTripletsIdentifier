@@ -18,8 +18,7 @@
 Data decoders decode the input data and return a dictionary of tensors keyed by
 the entries in core.reader.Fields.
 """
-from abc import ABCMeta
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 
 
 class DataDecoder(object):

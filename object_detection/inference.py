@@ -1,23 +1,25 @@
-import numpy as np
+import argparse
+import glob
 import os
-import six.moves.urllib as urllib
 import sys
 import tarfile
-import tensorflow as tf
-import zipfile
-#import cv2
-import matplotlib.pyplot as plt
-import glob
 import time
-import argparse
-from multiprocessing import Process, Queue, Event
-
+import zipfile
 from collections import defaultdict
 from io import StringIO
-from matplotlib import pyplot as plt
+from multiprocessing import Event, Process, Queue
+
+import numpy as np
+import six.moves.urllib as urllib
 from PIL import Image
+
+#import cv2
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from matplotlib import pyplot as plt
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
+
 
 def load_image_into_numpy_array(image):
     (im_width, im_height) = image.size

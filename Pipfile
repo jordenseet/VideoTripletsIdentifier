@@ -16,6 +16,9 @@ opencv-python = "*"
 flask-bootstrap = "*"
 flask-login = "*"
 flask-sqlalchemy = "*"
+tensorflow = "*"
+matplotlib = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.6"

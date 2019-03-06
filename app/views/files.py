@@ -5,7 +5,7 @@ from flask import current_app as app
 from flask import redirect, request, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
-from .process import yolo
+from .process import chunking, yolo
 
 mod = Blueprint('files', __name__)
 
@@ -27,7 +27,13 @@ def upload_file():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(directory_name, filename))
 
-    
+                result = chunking(filename)
+                if result == 'Success':
+                    keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'].split('/')[-1])
+                                 for video in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER'])]
+                    keyframes = sorted(keyframes, key=lambda x: int(''.join([ch for ch in x[0].split('.')[0] if ch.isdigit()])))
+                    for video, folder in keyframes:
+                        yolo(video)
     return redirect(url_for('index'))
 
 

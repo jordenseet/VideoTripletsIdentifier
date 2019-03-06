@@ -20,8 +20,7 @@ to numpy arrays (materialized tensors) directly, it is used to read data for
 evaluation/visualization; to parse the data during training, DataDecoder should
 be used.
 """
-from abc import ABCMeta
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 
 
 class DataToNumpyParser(object):

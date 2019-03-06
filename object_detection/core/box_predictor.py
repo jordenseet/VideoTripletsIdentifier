@@ -27,6 +27,7 @@ These modules are separated from the main model since the same
 few box predictor architectures are shared across many models.
 """
 from abc import abstractmethod
+
 import tensorflow as tf
 
 BOX_ENCODINGS = 'box_encodings'

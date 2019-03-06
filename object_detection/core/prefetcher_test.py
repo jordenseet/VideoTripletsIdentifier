@@ -15,7 +15,6 @@
 
 """Tests for object_detection.core.prefetcher."""
 import tensorflow as tf
-
 from object_detection.core import prefetcher
 
 slim = tf.contrib.slim

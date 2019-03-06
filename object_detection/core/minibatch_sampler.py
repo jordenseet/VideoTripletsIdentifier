@@ -28,11 +28,9 @@ Subclasses should implement the Subsample function and can make use of the
 @staticmethod SubsampleIndicator.
 """
 
-from abc import ABCMeta
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 
 import tensorflow as tf
-
 from object_detection.utils import ops
 
 

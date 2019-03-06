@@ -19,9 +19,7 @@ import numpy as np
 import six
 
 import tensorflow as tf
-
-from object_detection.core import preprocessor
-from object_detection.core import preprocessor_cache
+from object_detection.core import preprocessor, preprocessor_cache
 from object_detection.core import standard_fields as fields
 
 if six.PY2:

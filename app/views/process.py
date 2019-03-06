@@ -1,15 +1,15 @@
 import os
 import subprocess
 
-import cv2
 import numpy as np
 import requests
+
+import config
+import cv2
 from classifier import AccidentsClassifier
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, redirect, request, url_for
-
-import config
 
 mod = Blueprint('process', __name__)
 x = AccidentsClassifier()
@@ -24,6 +24,7 @@ def yolo(filename=None):
     if not os.path.isfile(image_path):
         return redirect(url_for('index'))
 
+<<<<<<< HEAD
     hasAccident = x.detect_accident(image_path)
     print(hasAccident)
     if hasAccident:
@@ -32,6 +33,10 @@ def yolo(filename=None):
         return "False"
         
 
+=======
+    return x.detect_accident(image_path)
+        
+>>>>>>> Remove darknet and refactor code. Chained chunking and detection on each keyframe
 @mod.route('/<folder>/get_image_captions', methods=['GET'])
 def get_image_captions(folder):
     # Set image_path to the local path of an image that you want to analyze.

@@ -15,8 +15,8 @@
 
 """Tests for object_detection.core.keypoint_ops."""
 import numpy as np
-import tensorflow as tf
 
+import tensorflow as tf
 from object_detection.core import keypoint_ops
 
 
