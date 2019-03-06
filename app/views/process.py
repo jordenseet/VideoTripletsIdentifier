@@ -99,42 +99,21 @@ def chunking():
     vidcap = cv2.VideoCapture(video_path)
     count = 0
 
-    prev_image_greyscale = None
-    prev_image_magnitude = None
+    print("Chunking in progress")
     while True:
         # set time in video to capture
         vidcap.set(cv2.CAP_PROP_POS_MSEC, (count*1000))
         success, image = vidcap.read()
         if not success:
             break
-
-        # grayscale current image
-        image_greyscale = np.inner(image, [.3, .59, .11]).astype(np.int64)
-        magnitude = np.square(image_greyscale).sum()
-
-        # comparing between 2 images
-        if prev_image_greyscale is not None:
-            similarity = 0
-            try:
-                # accumulator variables to calculate similarity
-                dot_product = (image_greyscale * prev_image_greyscale).sum()
-                similarity = np.divide(
-                    dot_product,
-                    (np.sqrt(magnitude) * np.sqrt(prev_image_magnitude)))
-
-                if similarity < 0.93:
-                    # save frame as JPEG file
-                    cv2.imwrite(
-                        os.path.join(folder,
-                                     "frame{:d}.jpg".format(count)), image)
-            except Exception:
-                pass
-
-            print(similarity)
-
-        prev_image_greyscale = image_greyscale
-        prev_image_magnitude = magnitude
+            
+        # write image into keyframe
+        cv2.imwrite(os.path.join(folder,
+            "frame{:d}.jpg".format(count)), image)
+            
         count += 1
+
+    print("Chunking complete")
     return "Success"
 
 
