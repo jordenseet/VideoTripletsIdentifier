@@ -7,5 +7,9 @@ node_modules/*
 __pycache__/*
 
 *.lock
+*.pyc
+*/*.pyc
+*/*/*.pyc
+*/*/*/*.pyc
 
 database.db
