@@ -56,11 +56,19 @@ class AccidentsClassifier(object):
         img.setflags(write=1)
 
         boxes, scores, classes, num = self.get_classification(img)
-        #scores, classes = x.get_classification(img)
+        # print("Boxes:", boxes)
+        # print("Scores:", scores)
+        # print("Classes:", classes)
+        # print("Num:", num)
 
         vis_util.visualize_boxes_and_labels_on_image_array(img, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, line_thickness=8)
 
-        output_image = input_image + '_output.jpg'
-        plt.imsave(output_image, img)
-
-        return "done"
+        # if there is accident, write out the image
+        min_score_thresh =.5
+        print("Score:", scores[0][0])
+        if scores[0][0] > min_score_thresh:
+            output_image = input_image + '_output.jpg'
+            plt.imsave(output_image, img)
+            return True
+        else:
+            return False

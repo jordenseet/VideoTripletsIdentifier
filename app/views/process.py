@@ -24,7 +24,12 @@ def yolo():
     if not os.path.isfile(image_path):
         return redirect(url_for('index'))
 
-    return x.detect_accident(image_path)
+    hasAccident = x.detect_accident(image_path)
+    print(hasAccident)
+    if hasAccident:
+        return "True"
+    else:
+        return "False"
         
 @mod.route('/<folder>/get_image_captions', methods=['GET'])
 def get_image_captions(folder):
