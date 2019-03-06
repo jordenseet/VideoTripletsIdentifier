@@ -8,19 +8,11 @@ from object_detection.utils import visualization_utils as vis_util
 import os
 import sys
 
-if len(sys.argv) != 3:
-    print("Usage: python classifier.py [Input Image] [Output Image]")
-    sys.exit(0)
-
-input_image = sys.argv[1]
-
-output_image = sys.argv[2]
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 class AccidentsClassifier(object):
     def __init__(self):
-        PATH_TO_MODEL = 'accidentDetection/graph/frozen_inference_graph.pb'
+        PATH_TO_MODEL = 'graph/frozen_inference_graph.pb'
         self.detection_graph = tf.Graph()
         with self.detection_graph.as_default():
             od_graph_def = tf.GraphDef()
@@ -52,26 +44,23 @@ class AccidentsClassifier(object):
             )"""
         return boxes, scores, classes, num
 
-PATH_TO_LABELS = './accidentDetection/accidents.pbtxt'
-NUM_CLASSES = 1
+    def detect_accident(self, input_image):
+        PATH_TO_LABELS = './accidents.pbtxt'
+        NUM_CLASSES = 1
 
-label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
-categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
-category_index = label_map_util.create_category_index(categories)
+        label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+        categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+        category_index = label_map_util.create_category_index(categories)
 
-img = plt.imread(input_image)#[::-1,:,::-1]
-img.setflags(write=1)
+        img = plt.imread(input_image)#[::-1,:,::-1]
+        img.setflags(write=1)
 
-x = AccidentsClassifier()
+        boxes, scores, classes, num = self.get_classification(img)
+        #scores, classes = x.get_classification(img)
 
-boxes, scores, classes, num = x.get_classification(img)
-#scores, classes = x.get_classification(img)
+        vis_util.visualize_boxes_and_labels_on_image_array(img, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, line_thickness=8)
 
-vis_util.visualize_boxes_and_labels_on_image_array(img, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, line_thickness=8)
+        output_image = input_image + '_output.jpg'
+        plt.imsave(output_image, img)
 
-plt.imsave(output_image, img)
-
-#IMAGE_SIZE = (12, 8)
-#plt.figure(figsize=IMAGE_SIZE)
-#plt.imshow(img)
-print("done")
+        return "done"

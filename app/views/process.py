@@ -4,6 +4,7 @@ import subprocess
 import cv2
 import numpy as np
 import requests
+from classifier import AccidentsClassifier
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, redirect, request, url_for
@@ -11,7 +12,7 @@ from flask import jsonify, redirect, request, url_for
 import config
 
 mod = Blueprint('process', __name__)
-
+x = AccidentsClassifier()
 
 @mod.route('/images/detect')
 def yolo():
@@ -23,27 +24,8 @@ def yolo():
     if not os.path.isfile(image_path):
         return redirect(url_for('index'))
 
-    # run accident detection
-    print(os.getcwd())
-    p = subprocess.run(['python', './accidentDetection/classifier.py',
-                        image_path,
-                        image_path+'_output.jpg'],
-                       stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE)
-    if p.returncode == 0:
-        result = p.stdout.decode('utf-8')
-        print(result)
-        if os.path.isfile('./assets/predictions.jpg'):
-            return '''
-            <html><body><img src="/files/assets/predictions.jpg" /></body></html>
-            '''
-        else:
-            return result
-    else:
-        err = p.stderr.decode('utf-8')
-        return 'Error: ' + str(err)
-
-
+    return x.detect_accident(image_path)
+        
 @mod.route('/<folder>/get_image_captions', methods=['GET'])
 def get_image_captions(folder):
     # Set image_path to the local path of an image that you want to analyze.
