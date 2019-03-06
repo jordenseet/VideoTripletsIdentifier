@@ -63,7 +63,6 @@ class AccidentsClassifier(object):
 
         vis_util.visualize_boxes_and_labels_on_image_array(img, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, line_thickness=8)
 
-<<<<<<< HEAD
         # if there is accident, write out the image
         min_score_thresh =.5
         print("Score:", scores[0][0])
@@ -73,9 +72,3 @@ class AccidentsClassifier(object):
             return True
         else:
             return False
-=======
-        output_image = input_image + '_output.jpg'
-        plt.imsave(output_image, img)
-
-        return "done"
->>>>>>> Remove darknet and refactor code. Chained chunking and detection on each keyframe
