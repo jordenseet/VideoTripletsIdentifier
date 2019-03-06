@@ -15,9 +15,9 @@ mod = Blueprint('process', __name__)
 x = AccidentsClassifier()
 
 @mod.route('/images/detect')
-def yolo():
+def yolo(filename=None):
     # Set image_path to the local path of an image that you want to analyze.
-    filename = request.args['file'] if 'file' in request.args else ''
+    filename = request.args['file'] if 'file' in request.args else filename
     image_path = os.path.join(config.IMAGE_UPLOAD_FOLDER, filename)
 
     # ensure that the file exists before we process it
@@ -31,6 +31,7 @@ def yolo():
     else:
         return "False"
         
+
 @mod.route('/<folder>/get_image_captions', methods=['GET'])
 def get_image_captions(folder):
     # Set image_path to the local path of an image that you want to analyze.
@@ -67,9 +68,9 @@ def get_image_captions(folder):
 
 
 @mod.route('/chunking', methods=['GET'])
-def chunking():
+def chunking(filename=None):
     folder = app.config['KEYFRAME_UPLOAD_FOLDER']
-    filename = request.args['file'] if 'file' in request.args else ''
+    filename = request.args['file'] if 'file' in request.args else filename
     video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
     vidcap = cv2.VideoCapture(video_path)
     count = 0

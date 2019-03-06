@@ -19,6 +19,7 @@ def index():
     ]
     keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'].split('/')[-1])
                  for video in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER'])]
+    keyframes = sorted(keyframes, key=lambda x: int(''.join([ch for ch in x[0].split('.')[0] if ch.isdigit()])))
 
     print(uploaded_files)
     uploaded_files = tuple(uploaded_files)  # casts the list to tuple

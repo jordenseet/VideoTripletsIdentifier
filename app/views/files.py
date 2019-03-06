@@ -5,6 +5,8 @@ from flask import current_app as app
 from flask import redirect, request, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
+from .process import yolo
+
 mod = Blueprint('files', __name__)
 
 
@@ -25,6 +27,7 @@ def upload_file():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(directory_name, filename))
 
+    
     return redirect(url_for('index'))
 
 
