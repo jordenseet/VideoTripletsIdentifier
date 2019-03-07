@@ -31,6 +31,18 @@
         </ul>
         {% endif %}
 
+        {% if uploaded_files %}
+        <h1>Videos</h1>
+        <ul>
+            {% for name, type in uploaded_files %}
+            {% if type == 'videos' %}
+            <video src="/files/{{ type }}/{{ name }}" controls>
+            </video>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+
         {% if keyframes %}
         <h1>Keyframes</h1>
         {% if flagged != '1' %}
