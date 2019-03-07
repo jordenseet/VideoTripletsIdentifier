@@ -33,13 +33,23 @@
 
         {% if keyframes %}
         <h1>Keyframes</h1>
+        {% if flagged != '1' %}
+        <button type="button" class="btn btn-md btn-secondary-outline" onclick="goto('?flagged=1')">View Flagged Keyframes</button>
+        {% else %}
+        <button type="button" class="btn btn-md btn-secondary-outline" onclick="goto('?flagged=0')">View All Keyframes</button>
+        {% endif %}
         <div class="album py-5 bg-light">
             <div class="container">
                 <div class="row">
                 {% for name, type in keyframes %}
+                {% if flagged != '1' or 'output' in name %}
                 {% set endpoint = "/files/" + type + "/process/get_image_captions" %}
                 <div class="col-md-4">
+                    {% if 'output' in name %}
+                    <div class="card mb-4 shadow-sm bg-danger text-white">
+                    {% else %}
                     <div class="card mb-4 shadow-sm">
+                    {% endif %}
                         <a href="#img{{ name }}">
                         <img class="card-img-top img-responsive" src="/files/{{ type }}/{{ name }}" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
                         </a>
@@ -50,14 +60,15 @@
                             <p class="card-text"></p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="goto('/files/{{ type }}/{{ name }}')">View</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="goto('/files/{{ type }}/{{ name }}/delete')">Delete</button>
+                                <button type="button" class="btn btn-sm btn-primary btn-dark" onclick="goto('/files/{{ type }}/{{ name }}')">View</button>
+                                <button type="button" class="btn btn-sm btn-primary btn-dark" onclick="goto('/files/{{ type }}/{{ name }}/delete')">Delete</button>
                                 </div>
                                 <small class="text-muted"></small>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% endif %}
                 {% endfor %}
                 </div>
             </div>

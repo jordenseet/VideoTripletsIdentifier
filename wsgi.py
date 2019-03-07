@@ -2,7 +2,7 @@ import os
 import os.path
 
 from app import create_app
-from flask import render_template
+from flask import render_template, request
 
 app = create_app()
 
@@ -25,7 +25,8 @@ def index():
     return render_template(
         'index.html',
         uploaded_files=uploaded_files,
-        keyframes=keyframes)
+        keyframes=keyframes,
+        flagged=request.args.get('flagged'))
 
 
 # @app.route('/upload_video_to_azure', methods=['GET'])

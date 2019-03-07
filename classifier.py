@@ -10,6 +10,7 @@ from object_detection.utils import visualization_utils as vis_util
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+
 class AccidentsClassifier(object):
     def __init__(self):
         PATH_TO_MODEL = 'graph/frozen_inference_graph.pb'
@@ -26,7 +27,7 @@ class AccidentsClassifier(object):
             self.d_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
             self.d_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
             self.num_d = self.detection_graph.get_tensor_by_name('num_detections:0')
-        
+
         self.sess = tf.Session(graph=self.detection_graph)
 
     def get_classification(self, img):
@@ -52,7 +53,7 @@ class AccidentsClassifier(object):
         categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
         category_index = label_map_util.create_category_index(categories)
 
-        img = plt.imread(input_image)#[::-1,:,::-1]
+        img = plt.imread(input_image)  # [::-1,:,::-1]
         img.setflags(write=1)
 
         boxes, scores, classes, num = self.get_classification(img)
@@ -64,10 +65,10 @@ class AccidentsClassifier(object):
         vis_util.visualize_boxes_and_labels_on_image_array(img, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, line_thickness=8)
 
         # if there is accident, write out the image
-        min_score_thresh =.5
+        min_score_thresh = .5
         print("Score:", scores[0][0])
         if scores[0][0] > min_score_thresh:
-            output_image = input_image
+            output_image = input_image + '_output.jpg'
             plt.imsave(output_image, img)
             return True
         else:

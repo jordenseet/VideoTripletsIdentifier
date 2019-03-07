@@ -1,7 +1,5 @@
 import os
-import subprocess
 
-import numpy as np
 import requests
 
 import config
@@ -14,11 +12,12 @@ from flask import jsonify, redirect, request, url_for
 mod = Blueprint('process', __name__)
 x = AccidentsClassifier()
 
+
 @mod.route('/images/detect')
 def yolo(filename=None):
     # Set image_path to the local path of an image that you want to analyze.
-    filename = request.args['file'] if 'file' in request.args else filename
-    image_path = os.path.join(config.IMAGE_UPLOAD_FOLDER, filename)
+    filename = request.args['file'] if filename is None else filename
+    image_path = os.path.join(config.KEYFRAME_UPLOAD_FOLDER, filename)
 
     # ensure that the file exists before we process it
     if not os.path.isfile(image_path):
@@ -27,10 +26,11 @@ def yolo(filename=None):
     hasAccident = x.detect_accident(image_path)
     print(hasAccident)
     if hasAccident:
+        os.remove(image_path)
         return "True"
     else:
         return "False"
-        
+
 
 @mod.route('/<folder>/get_image_captions', methods=['GET'])
 def get_image_captions(folder):
@@ -69,6 +69,11 @@ def get_image_captions(folder):
 
 @mod.route('/chunking', methods=['GET'])
 def chunking(filename=None):
+    for img in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER']):
+        img = os.path.join(app.config['KEYFRAME_UPLOAD_FOLDER'], img)
+        if os.path.isfile(img):
+            os.remove(img)
+
     folder = app.config['KEYFRAME_UPLOAD_FOLDER']
     filename = request.args['file'] if 'file' in request.args else filename
     video_path = os.path.join(app.config["VIDEO_UPLOAD_FOLDER"], filename)
@@ -82,15 +87,23 @@ def chunking(filename=None):
         success, image = vidcap.read()
         if not success:
             break
-            
+
         # write image into keyframe
         cv2.imwrite(os.path.join(folder,
-            "frame{:d}.jpg".format(count)), image)
-            
+                    "frame{:d}.jpg".format(count)), image)
+
         count += 1
 
     print("Chunking complete")
-    return "Success"
+
+    # detect car accidents
+    keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'].split('/')[-1])
+                 for video in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER'])]
+    keyframes = sorted(keyframes, key=lambda x: int(''.join([ch for ch in x[0].split('.')[0] if ch.isdigit()])))
+    for video, folder in keyframes:
+        yolo(video)
+    print('Detection complete')
+    return redirect(url_for('index'))
 
 
 @mod.route('/triplets/<text>', methods=['GET'])

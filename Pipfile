@@ -18,7 +18,7 @@ flask-login = "*"
 flask-sqlalchemy = "*"
 tensorflow = "*"
 matplotlib = "*"
-numpy = "*"
+numpy = "<1.16"
 
 [requires]
 python_version = "3.6"
