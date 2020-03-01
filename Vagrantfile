@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "envimation/ubuntu-xenial-docker"
+  config.vm.box = "ubuntu/bionic64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -52,9 +52,9 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
     # vb.gui = true
-  
+
     # Customize the amount of memory on the VM:
-    vb.memory = "2048"
+    vb.memory = "4096"
     vb.cpus = 2
   end
   #
@@ -65,7 +65,13 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    docker build -t vagrant /vagrant
-    docker run -d -v /vagrant/app:/app/app:ro --tmpfs /app/uploads -p5000:5000 --restart=always vagrant
+    # docker build -t vagrant /vagrant
+    # docker run -d -v /vagrant/app:/app/app:ro --tmpfs /app/uploads -p5000:5000 --restart=always vagrant
+    apt-get update
+    apt-get install -y python3-pip python3-dev libsm6 libxrender1 libxext6
+    mkdir /app
+    cp -r /vagrant/* /app
+    pip3 install --no-cache-dir setuptools
+    pip3 install --no-cache-dir -r /app/requirements.txt
   SHELL
 end

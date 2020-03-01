@@ -1,3 +1,4 @@
+import json
 import os
 import os.path
 
@@ -18,14 +19,21 @@ def index():
     ]
     keyframes = [(video, app.config['KEYFRAME_UPLOAD_FOLDER'].split('/')[-1])
                  for video in os.listdir(app.config['KEYFRAME_UPLOAD_FOLDER'])]
+    # sort keyframes by the frameX id number where id is X
     keyframes = sorted(keyframes, key=lambda x: int(''.join([ch for ch in x[0].split('.')[0] if ch.isdigit()])))
 
-    print(uploaded_files)
+    keyframes_caption_filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'keyframes_caption.json')
+    keyframes_caption = {}
+    if os.path.isfile(keyframes_caption_filepath):
+      with open(keyframes_caption_filepath) as f:
+        keyframes_caption = json.loads(f.read())
+
     uploaded_files = tuple(uploaded_files)  # casts the list to tuple
     return render_template(
         'index.html',
         uploaded_files=uploaded_files,
         keyframes=keyframes,
+        keyframes_caption=keyframes_caption,
         flagged=request.args.get('flagged'))
 
 

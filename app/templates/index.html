@@ -26,7 +26,7 @@
         <ul>
             {% for name, type in uploaded_files %}
             {% set endpoint = "/process/" + type.replace("uploads/", "") + "/detect" if type == "uploads/images" else "/process/chunking" %}
-            <li><a href="{{ endpoint }}?file={{ name }}">{{ name }}</a> [<a href="/files/{{ type }}/{{ name }}">View</a>] [<a href="/files/{{ type }}/{{ name }}/delete">Delete</a>]</li>
+            <li><a href="{{ endpoint }}?file={{ name }}">{{ name }}</a> [<a href="/files/{{ type }}/{{ name }}">View</a>] [<a href="/files/{{ type }}/{{ name }}/delete">Delete</a>] [<a href="/process/{{ type }}/detect?file={{ name }}">Detect</a>] {% if type == "images" %}[<a href="/process/{{ type }}/captionize?file={{ name }}">Captionize</a>]{% endif %}</li>
             {% endfor %}
         </ul>
         {% endif %}
@@ -60,20 +60,21 @@
                     {% if 'output' in name %}
                     <div class="card mb-4 shadow-sm bg-danger text-white">
                     {% else %}
-                    <div class="card mb-4 shadow-sm">
+                    <div class="card mb-4 shadow-sm not-danger">
                     {% endif %}
                         <a href="#img{{ name }}">
                         <img class="card-img-top img-responsive" src="/files/{{ type }}/{{ name }}" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
                         </a>
                         <a href="#_" class="lightbox" id="img{{ name }}">
                         <img src="/files/{{ type }}/{{ name }}">
-                        </a>                        
+                        </a>
                         <div class="card-body">
                             <p class="card-text"></p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-primary btn-dark" onclick="goto('/files/{{ type }}/{{ name }}')">View</button>
                                 <button type="button" class="btn btn-sm btn-primary btn-dark" onclick="goto('/files/{{ type }}/{{ name }}/delete')">Delete</button>
+                                <button type="button" class="btn btn-sm btn-primary btn-dark" onclick="goto('/process/images/captionize?file={{ name }}')">Captionize</button>
                                 </div>
                                 <small class="text-muted"></small>
                             </div>
@@ -91,6 +92,10 @@
 
 {% block scripts %}
     {{ super() }}
+    <script>
+        keyframes_caption = {{ keyframes_caption | tojson }};
+    </script>
+
     <script type="module" src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/popper.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/holder/2.9.6/holder.min.js"></script>
     <script>
@@ -101,7 +106,7 @@
 
         my_file_selector.change(() =>
             upload_file_info.html(my_file_selector.prop('files')[0].name))
-        
+
         submit_file_btn.click(() => upload_form.submit())
 
         function goto(url) {

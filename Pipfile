@@ -16,9 +16,10 @@ opencv-python = "*"
 flask-bootstrap = "*"
 flask-login = "*"
 flask-sqlalchemy = "*"
-tensorflow = "*"
+tensorflow = "==1.14"
 matplotlib = "*"
-numpy = "<1.16"
+numpy = "==1.16.1"
+keras = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3"

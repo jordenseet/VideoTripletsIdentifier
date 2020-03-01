@@ -16,9 +16,9 @@ class AccidentsClassifier(object):
         PATH_TO_MODEL = 'graph/frozen_inference_graph.pb'
         self.detection_graph = tf.Graph()
         with self.detection_graph.as_default():
-            od_graph_def = tf.GraphDef()
+            od_graph_def = tf.compat.v1.GraphDef()
             # Works up to here.
-            with tf.gfile.GFile(PATH_TO_MODEL, 'rb') as fid:
+            with tf.io.gfile.GFile(PATH_TO_MODEL, 'rb') as fid:
                 serialized_graph = fid.read()
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
@@ -28,7 +28,7 @@ class AccidentsClassifier(object):
             self.d_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
             self.num_d = self.detection_graph.get_tensor_by_name('num_detections:0')
 
-        self.sess = tf.Session(graph=self.detection_graph)
+        self.sess = tf.compat.v1.Session(graph=self.detection_graph)
 
     def get_classification(self, img):
         # Bounding Box Detection.
@@ -54,7 +54,8 @@ class AccidentsClassifier(object):
         category_index = label_map_util.create_category_index(categories)
 
         img = plt.imread(input_image)  # [::-1,:,::-1]
-        img.setflags(write=1)
+        img = np.copy(img)
+        # img.setflags(write=1)
 
         boxes, scores, classes, num = self.get_classification(img)
         # print("Boxes:", boxes)
